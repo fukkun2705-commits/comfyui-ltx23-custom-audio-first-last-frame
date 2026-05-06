@@ -1,0 +1,76 @@
+OmniVoice 導入手順
+※導入先ディレクトリ例　E:\OmniVoice>
+
+事前準備
+Minicondaを導入
+※下記のページを参照してMinicondaを導入する
+https://www.anaconda.com/docs/getting-started/miniconda/install/windows-gui-install
+※インストール時の設定
+✅ チェックするもの
+✔ Create shortcuts（そのままでOK）
+✔ Clear the package cache upon completion（チェック推奨）
+❌ チェックしないもの（重要）
+❌ Add Miniconda3 to my PATH
+❌ Register Miniconda3 as my default Python
+
+Windowsの検索欄で、
+
+1. Anaconda Prompt または Miniconda Prompt を開く
+condaのバージョンを確認する
+conda --version
+※このような表示ならばOK
+conda 26.1.1
+
+2. 作業フォルダへ移動
+E:
+cd \OmniVoice
+※下記の様になればOK
+(base) E:\OmniVoice>
+
+3. 利用規約に同意
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2
+
+4. 既存環境があれば削除
+※前回に導入が失敗した環境があれば削除します
+conda env remove -n omnivoice -y
+
+5. 新規環境を作成
+conda create -n omnivoice -c conda-forge --override-channels python=3.12 pip ffmpeg -y
+
+6. 環境を有効化
+conda activate omnivoice
+※このようになればOK
+(omnivoice) E:\OmniVoice>
+
+7. Python 自体が正常か確認
+python -c "import ctypes; print('ctypes OK')"
+※このようになればOK
+ctypes OK
+
+8. FFmpeg 確認
+ffmpeg -version
+※バージョンが表示されればOK
+
+9-A.
+python -m pip install torch==2.8.0+cu128 torchaudio==2.8.0+cu128 --extra-index-url https://download.pytorch.org/whl/cu128
+
+OmniVoice 本体を入れる
+python -m pip install omnivoice
+
+起動
+omnivoice-demo --ip 127.0.0.1 --port 8001
+
+
+起動バッチ
+@echo off
+cd /d E:\OmniVoice
+
+call C:\Users\toshi02\miniconda3\Scripts\activate.bat omnivoice
+
+start "" powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 20; Start-Process 'http://127.0.0.1:8001'"
+
+omnivoice-demo --ip 127.0.0.1 --port 8001
+
+pause
